@@ -1,0 +1,3 @@
+[submodule "target/dependency/chez-srfi"]
+	path = target/dependency/chez-srfi
+	url = https://github.com/akeep/chez-srfi.git

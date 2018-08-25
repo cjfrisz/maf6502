@@ -1,0 +1,41 @@
+#xC000 | #xA9 #x05          ;  lda #5        ; test input, aka, the only fact argument
+       | 
+#xC002 | #xC9 #x00          ;  cmp #0        ; special case zero (even though fact doesn't accept 0
+#xC004 | #xD0 #x03          ; bne continue  ; skip the zero case
+#xC006 | #xA9 #x01          ;  lda #1        ; load 1 in A, our result register
+#xC008 | #x00               ;  brk           ; FINISHED
+       |                    ; continue:
+#xC009 | #xAA               ; tax           ; copy A to X to seed iteration
+       |                    ; iterate:
+#xC00A | #xCA               ;  dex           ; decrement X so we can do n * (n-1)
+#xC00B | #xE0 #x01          ;  cpx #1        ; base case: (n-1) == 1
+#xC00D | #xF0 #x1B          ;  beq end       ; if so, jump to the end
+#xC00F | #xA8               ;  tay           ; otherwise, stash A in Y
+#xC010 | #x8A               ;  txa           ; copy our current iteration value to A
+#xC011 | #x48               ;  pha           ; stash the iteration variable on the stack
+#xC012 | #x98               ;  tya           ; retrieve A's value from Y
+#xC013 | #x8D #x00 #x00     ;  sta $0000     ; put A into memory
+#xC016 | #xA9 #x00          ;  lda #0        ; initialize A as the result register
+       |                    ; loop:
+#xC018 | #xE0 #x00          ;  cpx #0        ; base case: X is zero and we're done iterating
+#xC01A | #xF0 #x07          ;  beq return    ; if we're done, jump back to fact
+#xC01C | #x6D #x00 #x00     ; adc $0000     ; otherwise, add the original operand value to A
+#xC01F | #xCA               ;  dex           ; decrement X
+#xC020 | #x4C #x18 #xC0     ;  jmp loop      ; jump back to the top of the multiplication loop
+       |                    ; return:
+#xC023 | #xA8               ;  tay           ; stash A in Y
+#xC024 | #x68               ;  pla           ; retrieve our iterator value for factorial from the stack
+#xC025 | #xAA               ;  tax           ; put the iterator back into X
+#xC026 | #x98               ;  tya           ; get the multiplication result from Y into A
+#xC027 | #x4C #x0A #xC0     ;  jmp iterate   ; go back to the top of fact's iteration
+       |                    ; end:
+#xC02A | #x00               ;  brk
+
+(let ([*cpu* (make-cpu)]
+      [*memory* (make-memory)]
+      [fact-bytes '#vu8( #xA9 #x05 #xC9 #x00 #xD0 #x03 #xA9 #x01 #x00 #xAA #xCA #xE0 #x01 #xF0 #x1B #xA8 #x8A #x48 #x98 #x8D #x00 #x00 #xA9 #x00 #xE0 #x00 #xF0 #x07 #x6D #x00 #x00 #xCA #x4C #x18 #xC0 #xA8 #x68 #xAA #x98 #x4C #x0A #xC0 #x00 )])
+  (load-program! fact-bytes *memory* #xC000)
+  (cpu-pc-set! *cpu* #xC000)
+  (execute *cpu* *memory*)
+  *cpu*)
+

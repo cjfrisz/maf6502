@@ -1,4 +1,4 @@
-(library (maf6502)
+(library (maf6502 cpu)
   (export
     make-cpu reset-cpu
     *pc-init* *s-init* *p-init* *a-init* *x-init* *y-init*

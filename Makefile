@@ -13,12 +13,12 @@ link-srfi-dirs : submodules/chez-srfi
 target/test/scheme/srfi : link-srfi-dirs submodules/chez-srfi target-dirs
 	ln -fs ../../../submodules/chez-srfi target/test/scheme/srfi
 
-target/main/scheme/maf6502.so : src/main/scheme/maf6502.ss target-dirs
+target/main/scheme/maf6502/cpu.so : src/main/scheme/maf6502/cpu.ss target-dirs
 	echo '(begin\
                 (compile-profile #t)\
                 (generate-allocation-counts #t)\
                 (generate-instruction-counts #t)\
-                (compile-file "src/main/scheme/maf6502.ss" "target/main/scheme/maf6502.so"))' | scheme -q --compile-imported-libraries
+                (compile-file "src/main/scheme/maf6502/cpu.ss" "target/main/scheme/maf6502/cpu.so"))' | scheme -q --compile-imported-libraries
 
 target/test/scheme/maf6502-test.so : src/test/scheme/maf6502-test.ss target/main/scheme/maf6502.so target/test/scheme/srfi target-dirs
 	echo '(compile-file "src/test/scheme/maf6502-test.ss" "target/test/scheme/maf6502-test.so")'\
@@ -27,9 +27,9 @@ target/test/scheme/maf6502-test.so : src/test/scheme/maf6502-test.ss target/main
 repl : src/test/scheme/maf6502-repl.ss target/main/scheme/maf6502.so
 	scheme --libdirs target/main/scheme src/test/scheme/maf6502-repl.ss
 
-run-tests : target/test/scheme/maf6502-test.so src/main/scheme/maf6502-assembler.ss
+run-tests : target/test/scheme/maf6502-test.so src/main/scheme/maf6502/assembler/parser.ss
 	scheme --debug-on-exception --libdirs target/main/scheme:target/test/scheme --program target/test/scheme/maf6502-test.so
-	( cd src/main/scheme ; echo '(maf6502-assembler-test)' | scheme -q maf6502-assembler.ss )
+	( cd src/main/scheme/maf6502/assembler ; echo '(maf6502-assembler-test)' | scheme -q parser.ss )
 
 clean :
 	rm -rf target/*

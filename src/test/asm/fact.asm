@@ -45,7 +45,7 @@
 ;-------------------------
   lda #5        ; test input, aka, the only fact argument
 
-  cmp #0        ; special case zero (even though fact doesn't accept 0
+  cmp #0        ; special case zero (even though fact doesn't accept 0) ;-)
   bne continue  ; skip the zero case
   lda #1        ; load 1 in A, our result register
   brk           ; FINISHED

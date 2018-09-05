@@ -1,3 +1,6 @@
 [submodule "submodules/chez-srfi"]
 	path = submodules/chez-srfi
 	url = https://github.com/akeep/chez-srfi.git
+[submodule "submodules/nanopass-framework"]
+	path = submodules/nanopass-framework
+	url = https://github.com/nanopass/nanopass-framework-scheme.git

@@ -48,7 +48,7 @@
           parse-consumed-all? parse-result-value parse-result-unused
           grammar-trace
           )
-  (import (streams))
+  (import streams)
 
   (define grammar-trace (make-parameter #f))
 

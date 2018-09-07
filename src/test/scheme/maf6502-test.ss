@@ -1,6 +1,6 @@
 (import
   (rename (chezscheme) (break cs:break))
-  (maf6502)
+  (maf6502 cpu)
   (srfi :78 lightweight-testing))
 
 (print-radix 16)
